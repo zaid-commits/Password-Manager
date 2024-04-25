@@ -11,6 +11,7 @@ import java.util.List;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+
 public class PasswordManager extends JFrame implements ActionListener {
     private static final String FILE_PATH = "passwords.dat";
     private static final String FEEDBACK_EMAIL = "zaidcommits.github@gmail.com";
@@ -238,6 +239,13 @@ public class PasswordManager extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
+                | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        
         SwingUtilities.invokeLater(() -> {
             PasswordManager passwordManager = new PasswordManager();
             passwordManager.setVisible(true);

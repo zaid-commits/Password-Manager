@@ -8,6 +8,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class PasswordManager extends JFrame implements ActionListener {
     private static final String FILE_PATH = "passwords.dat";
@@ -18,7 +20,8 @@ public class PasswordManager extends JFrame implements ActionListener {
     private JTextField websiteField, usernameField, notesField, searchField;
     private JPasswordField passwordField;
     private JTable passwordTable;
-    private JButton addButton, editButton, deleteButton, saveButton, loadButton, searchButton, aboutButton, feedbackButton;
+    private JButton addButton, editButton, deleteButton, saveButton, loadButton, searchButton, aboutButton,
+            feedbackButton;
 
     public PasswordManager() {
         super("Password Manager");
@@ -27,7 +30,7 @@ public class PasswordManager extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
 
         passwordEntries = new ArrayList<>();
-        tableModel = new DefaultTableModel(new Object[]{"Website", "Username", "Password", "Notes"}, 0);
+        tableModel = new DefaultTableModel(new Object[] { "Website", "Username", "Password", "Notes" }, 0);
         passwordTable = new JTable(tableModel);
 
         JPanel inputPanel = new JPanel(new GridLayout(5, 2));
@@ -114,13 +117,14 @@ public class PasswordManager extends JFrame implements ActionListener {
         if (!website.isEmpty() && !username.isEmpty() && !password.isEmpty()) {
             PasswordEntry entry = new PasswordEntry(website, username, password, notes);
             passwordEntries.add(entry);
-            tableModel.addRow(new Object[]{website, username, password, notes});
+            tableModel.addRow(new Object[] { website, username, password, notes });
             clearFields();
         } else {
             JOptionPane.showMessageDialog(this, "Please fill in all required fields (Website, Username, Password).",
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     private void editEntry() {
         int selectedRow = passwordTable.getSelectedRow();
         if (selectedRow != -1) {
@@ -204,12 +208,22 @@ public class PasswordManager extends JFrame implements ActionListener {
     }
 
     private void showAboutDeveloper() {
-        String aboutMessage = "This Password Manager application was developed by:\n\n" +
-                "Zaid Rakhange !\n" +
-                "GitHub: https://github.com/zaid-commits\n" +
-                "LinkedIn: https://www.linkedin.com/in/zaidrakhange\n\n" +
+        String aboutMessage = "<html>This Password Manager application was developed by:<br><br>" +
+                "<a href=\"https://github.com/zaid-commits\">Zaid Rakhange (GitHub)</a><br><br>" +
                 "Feel free to explore my other projects and connect with me!";
-        JOptionPane.showMessageDialog(this, aboutMessage, "About Developer", JOptionPane.INFORMATION_MESSAGE);
+        JLabel message = new JLabel(aboutMessage);
+        message.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        message.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    Desktop.getDesktop().browse(new URI("https://github.com/zaid-commits"));
+                } catch (IOException | URISyntaxException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        JOptionPane.showMessageDialog(this, message, "About Developer", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void sendFeedback() {
@@ -217,7 +231,9 @@ public class PasswordManager extends JFrame implements ActionListener {
             URI mailtoURI = new URI("mailto:" + FEEDBACK_EMAIL);
             Desktop.getDesktop().mail(mailtoURI);
         } catch (IOException | URISyntaxException ex) {
-            JOptionPane.showMessageDialog(this, "Failed to open mail composer. Please send your feedback manually to " + FEEDBACK_EMAIL, "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Failed to open mail composer. Please send your feedback manually to " + FEEDBACK_EMAIL, "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
